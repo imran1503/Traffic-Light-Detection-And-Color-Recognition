@@ -1,4 +1,3 @@
-
 ##### Author - Nilesh Chopda
 
 ##### Project - Traffic Light Detection and Color Recognition using Tensorflow Object Detection API
@@ -8,14 +7,17 @@
 
 import numpy as np
 import os
+
+
 import six.moves.urllib as urllib
 import tarfile
 import tensorflow as tf
 from matplotlib import pyplot as plt
 from PIL import Image
 from os import path
-from utils import label_map_util
-from utils import visualization_utils as vis_util
+from object_detection import label_map_util
+
+from object_detection.utils import visualization_utils as vis_util
 import time
 import cv2
 
@@ -60,7 +62,6 @@ def detect_red_and_yellow(img, Threshold=0.01):
         return True
     else:
         return False
-
 
 
 ### Loading Image Into Numpy Array
@@ -154,8 +155,9 @@ def detect_traffic_lights(PATH_TO_TEST_IMAGES_DIR, MODEL_NAME, Num_images, plot_
     # --------Load a (frozen) Tensorflow model into memory
     detection_graph = tf.Graph()
     with detection_graph.as_default():
-        od_graph_def = tf.GraphDef()
-        with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+        od_graph_def = tf.compat.v1.GraphDef()
+
+        with tf.compat.v2.io.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
             serialized_graph = fid.read()
             od_graph_def.ParseFromString(serialized_graph)
             tf.import_graph_def(od_graph_def, name='')
@@ -224,9 +226,5 @@ if __name__ == "__main__":
     MODEL_NAME = 'faster_rcnn_resnet101_coco_11_06_2017'  # for improved accuracy
 
     commands = detect_traffic_lights(PATH_TO_TEST_IMAGES_DIR, MODEL_NAME, Num_images, plot_flag=True)
-    print(commands)  # commands to print action type, for 'Go' this will return True and for 'Stop' this will return False
-
-
-
-
-
+    print(
+        commands)  # commands to print action type, for 'Go' this will return True and for 'Stop' this will return False
